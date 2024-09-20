@@ -1,10 +1,7 @@
-import React, { useState, useEffect } from 'react';
-import { Search, Bell, User, MapPin, Calendar, Briefcase, Star } from 'lucide-react';
+import { useState, useEffect } from 'react';
+import { Search, Bell, User } from 'lucide-react';
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Card, CardContent, CardHeader, CardTitle, CardFooter } from "@/components/ui/card";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Badge } from "@/components/ui/badge";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import JobCard from '../components/JobCard';
 import FilterButtons from '../components/FilterButtons';
