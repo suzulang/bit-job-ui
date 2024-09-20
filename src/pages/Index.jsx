@@ -5,13 +5,6 @@ import { Input } from "@/components/ui/input"
 import { Card, CardContent, CardHeader, CardTitle, CardFooter } from "@/components/ui/card"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Badge } from "@/components/ui/badge"
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select"
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip"
 
 // Mock data for job postings
@@ -135,6 +128,25 @@ export default function JobBoard() {
     }
   }
 
+  const FilterButtons = ({ category, options }) => (
+    <div className="flex flex-col space-y-2">
+      <span className="font-medium text-sm text-gray-700">{getCategoryName(category)}</span>
+      <div className="flex flex-wrap gap-2">
+        {options.map((option) => (
+          <Button
+            key={option}
+            variant={filters[category] === option ? "default" : "outline"}
+            size="sm"
+            onClick={() => handleFilterChange(category, option)}
+            className={filters[category] === option ? "bg-primary text-primary-foreground" : "text-gray-700"}
+          >
+            {option}
+          </Button>
+        ))}
+      </div>
+    </div>
+  )
+
   return (
     <div className="min-h-screen bg-background">
       {/* Navbar */}
@@ -200,23 +212,9 @@ export default function JobBoard() {
         </div>
 
         {/* Filters */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+        <div className="space-y-6 mb-8">
           {Object.entries(filterOptions).map(([category, options]) => (
-            <div key={category}>
-              <Select
-                value={filters[category]}
-                onValueChange={(value) => handleFilterChange(category, value)}
-              >
-                <SelectTrigger className="w-full">
-                  <SelectValue placeholder={getCategoryName(category)} />
-                </SelectTrigger>
-                <SelectContent>
-                  {options.map(option => (
-                    <SelectItem key={option} value={option}>{option}</SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
+            <FilterButtons key={category} category={category} options={options} />
           ))}
         </div>
 
