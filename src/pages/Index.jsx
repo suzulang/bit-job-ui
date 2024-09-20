@@ -1,11 +1,13 @@
-import React, { useState, useEffect } from 'react'
-import { Search, Bell, User, MapPin, Calendar, Briefcase, Star } from 'lucide-react'
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Card, CardContent, CardHeader, CardTitle, CardFooter } from "@/components/ui/card"
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
-import { Badge } from "@/components/ui/badge"
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip"
+import React, { useState, useEffect } from 'react';
+import { Search, Bell, User, MapPin, Calendar, Briefcase, Star } from 'lucide-react';
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Card, CardContent, CardHeader, CardTitle, CardFooter } from "@/components/ui/card";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Badge } from "@/components/ui/badge";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import JobCard from '../components/JobCard';
+import FilterButtons from '../components/FilterButtons';
 
 // Mock data for job postings
 const mockJobs = [
@@ -69,7 +71,7 @@ const mockJobs = [
     companyRating: 'A',
     deadline: '2024-09-30',
   },
-]
+];
 
 // Filter options
 const filterOptions = {
@@ -77,17 +79,17 @@ const filterOptions = {
   jobType: ['全部', '秋招提前批', '秋招正式岗', '春招正式岗', '实习岗'],
   companyRating: ['全部', 'S', 'A', 'B', 'C'],
   deadline: ['全部', '1天后截止', '3天后截止', '1周后截止', '招满即止'],
-}
+};
 
 export default function JobBoard() {
-  const [searchTerm, setSearchTerm] = useState('')
+  const [searchTerm, setSearchTerm] = useState('');
   const [filters, setFilters] = useState({
     applicationStatus: '全部',
     jobType: '全部',
     companyRating: '全部',
     deadline: '全部',
-  })
-  const [filteredJobs, setFilteredJobs] = useState(mockJobs)
+  });
+  const [filteredJobs, setFilteredJobs] = useState(mockJobs);
 
   useEffect(() => {
     const filteredResults = mockJobs.filter(job => {
@@ -97,59 +99,39 @@ export default function JobBoard() {
         (filters.jobType === '全部' || job.jobType === filters.jobType) &&
         (filters.companyRating === '全部' || job.companyRating === filters.companyRating) &&
         (filters.deadline === '全部' || checkDeadline(job.deadline, filters.deadline))
-      )
-    })
-    setFilteredJobs(filteredResults)
-  }, [filters, searchTerm])
+      );
+    });
+    setFilteredJobs(filteredResults);
+  }, [filters, searchTerm]);
 
   const handleFilterChange = (category, value) => {
     setFilters(prevFilters => ({
       ...prevFilters,
       [category]: value,
-    }))
-  }
+    }));
+  };
 
   const checkDeadline = (jobDeadline, filterDeadline) => {
-    const today = new Date()
-    const deadline = new Date(jobDeadline)
-    const diffDays = Math.ceil((deadline - today) / (1000 * 60 * 60 * 24))
+    const today = new Date();
+    const deadline = new Date(jobDeadline);
+    const diffDays = Math.ceil((deadline - today) / (1000 * 60 * 60 * 24));
 
     switch (filterDeadline) {
       case '1天后截止':
-        return diffDays <= 1
+        return diffDays <= 1;
       case '3天后截止':
-        return diffDays <= 3
+        return diffDays <= 3;
       case '1周后截止':
-        return diffDays <= 7
+        return diffDays <= 7;
       case '招满即止':
-        return true // Assuming all jobs are open until filled
+        return true; // Assuming all jobs are open until filled
       default:
-        return true
+        return true;
     }
-  }
-
-  const FilterButtons = ({ category, options }) => (
-    <div className="flex flex-col space-y-2">
-      <span className="font-medium text-sm text-gray-700">{getCategoryName(category)}</span>
-      <div className="flex flex-wrap gap-2">
-        {options.map((option) => (
-          <Button
-            key={option}
-            variant={filters[category] === option ? "default" : "outline"}
-            size="sm"
-            onClick={() => handleFilterChange(category, option)}
-            className={filters[category] === option ? "bg-primary text-primary-foreground" : "text-gray-700"}
-          >
-            {option}
-          </Button>
-        ))}
-      </div>
-    </div>
-  )
+  };
 
   return (
     <div className="min-h-screen bg-background">
-      {/* Navbar */}
       <nav className="bg-primary text-primary-foreground p-4 sticky top-0 z-10 shadow-md">
         <div className="container mx-auto flex justify-between items-center">
           <div className="flex items-center space-x-4">
@@ -187,7 +169,6 @@ export default function JobBoard() {
         </div>
       </nav>
 
-      {/* Banner */}
       <div className="bg-secondary text-secondary-foreground py-16 px-4">
         <div className="container mx-auto text-center">
           <h1 className="text-5xl font-bold mb-4">比特高校</h1>
@@ -195,9 +176,7 @@ export default function JobBoard() {
         </div>
       </div>
 
-      {/* Main content */}
       <div className="container mx-auto py-12">
-        {/* Search */}
         <div className="mb-8">
           <div className="relative max-w-2xl mx-auto">
             <Input
@@ -211,60 +190,24 @@ export default function JobBoard() {
           </div>
         </div>
 
-        {/* Filters */}
         <div className="space-y-6 mb-8">
           {Object.entries(filterOptions).map(([category, options]) => (
-            <FilterButtons key={category} category={category} options={options} />
+            <FilterButtons
+              key={category}
+              category={category}
+              options={options}
+              selectedOption={filters[category]}
+              onSelect={handleFilterChange}
+            />
           ))}
         </div>
 
-        {/* Job cards */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-8">
           {filteredJobs.map(job => (
-            <Card key={job.id} className="hover:shadow-lg transition-shadow duration-300">
-              <CardHeader>
-                <div className="flex items-center space-x-4">
-                  <Avatar className="h-12 w-12">
-                    <AvatarImage src={job.logo} alt={`${job.company} logo`} />
-                    <AvatarFallback>{job.company[0]}</AvatarFallback>
-                  </Avatar>
-                  <div>
-                    <CardTitle className="text-xl">{job.company}</CardTitle>
-                    <p className="text-lg font-semibold text-primary">{job.position}</p>
-                  </div>
-                </div>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-3">
-                  <div className="flex items-center space-x-2">
-                    <MapPin className="h-4 w-4 text-muted-foreground" />
-                    <span>{job.location}</span>
-                  </div>
-                  <div className="flex items-center space-x-2">
-                    <Calendar className="h-4 w-4 text-muted-foreground" />
-                    <span>{job.applicationPeriod}</span>
-                  </div>
-                  <div className="flex items-center space-x-2">
-                    <Briefcase className="h-4 w-4 text-muted-foreground" />
-                    <Badge variant="outline">{job.jobType}</Badge>
-                  </div>
-                  <div className="flex items-center space-x-2">
-                    <Star className="h-4 w-4 text-muted-foreground" />
-                    <Badge>{job.companyRating}</Badge>
-                  </div>
-                </div>
-              </CardContent>
-              <CardFooter className="flex justify-between items-center">
-                <Badge variant={job.applicationStatus === '已投递' ? "default" : "secondary"}>
-                  {job.applicationStatus}
-                </Badge>
-                <span className="text-sm text-muted-foreground">截止日期: {job.deadline}</span>
-              </CardFooter>
-            </Card>
+            <JobCard key={job.id} job={job} />
           ))}
         </div>
 
-        {/* Pagination */}
         <div className="mt-12 flex justify-center space-x-2">
           <Button variant="outline">&lt;</Button>
           <Button variant="default">1</Button>
@@ -274,20 +217,20 @@ export default function JobBoard() {
         </div>
       </div>
     </div>
-  )
+  );
 }
 
 function getCategoryName(category) {
   switch (category) {
     case 'applicationStatus':
-      return '投递状态'
+      return '投递状态';
     case 'jobType':
-      return '工作类型'
+      return '工作类型';
     case 'companyRating':
-      return '公司分级'
+      return '公司分级';
     case 'deadline':
-      return '截止时间'
+      return '截止时间';
     default:
-      return category
+      return category;
   }
 }
