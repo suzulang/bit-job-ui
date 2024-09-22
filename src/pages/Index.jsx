@@ -1,10 +1,11 @@
 import { useState, useEffect } from 'react';
-import { Search, Bell, User } from 'lucide-react';
+import { Search, Bell } from 'lucide-react';
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import JobCard from '../components/JobCard';
 import FilterButtons from '../components/FilterButtons';
+import CustomHoverCard from '../components/HoverCard';
 
 // Mock data for job postings
 const mockJobs = [
@@ -150,23 +151,12 @@ export default function JobBoard() {
                 </TooltipContent>
               </Tooltip>
             </TooltipProvider>
-            <TooltipProvider>
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <Button variant="ghost" size="icon" className="hover:bg-primary-foreground hover:text-primary">
-                    <User className="h-5 w-5" />
-                  </Button>
-                </TooltipTrigger>
-                <TooltipContent>
-                  <p>个人中心</p>
-                </TooltipContent>
-              </Tooltip>
-            </TooltipProvider>
+            <CustomHoverCard />
           </div>
         </div>
       </nav>
 
-      <div className="bg-secondary text-secondary-foreground py-16 px-4">
+      <div className="bg-gradient-to-r from-gray-700 via-gray-800 to-gray-900 text-white py-16 px-4">
         <div className="container mx-auto text-center">
           <h1 className="text-5xl font-bold mb-4">比特高校</h1>
           <p className="text-2xl">招聘公司汇总</p>
